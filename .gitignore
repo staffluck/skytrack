@@ -1,0 +1,5 @@
+Pipfile
+Pipfile.lock
+.vscode/
+project_db.db
+
