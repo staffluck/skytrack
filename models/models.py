@@ -35,6 +35,8 @@ class Order(BaseModel):
     reg_date = Column(DateTime, nullable=False)
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
 
+    items = relationship("OrderItem", back_populates="order")
+
 
 class OrderItem(BaseModel):
     __tablename__ = "order_items"
@@ -44,6 +46,6 @@ class OrderItem(BaseModel):
     book_id = Column(Integer, ForeignKey("books.id"), nullable=False)
     shop_id = Column(Integer, ForeignKey("shops.id"), nullable=False)
 
-    order = relationship("Order")
+    order = relationship("Order", back_populates="items")
     book = relationship("Book")
     shop = relationship("Shop")
