@@ -1,10 +1,10 @@
 import asyncio
 
 from db.base import Base, engine
-from models import base, user  # noqa Для подгрузки всех нужных моделей
+from models import models
 
 
-async def init_models():
+async def init_models():  # Я бы, конечно, использовал alembic, но по ТЗ можно и так =)
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.drop_all)
         await conn.run_sync(Base.metadata.create_all)
