@@ -11,7 +11,7 @@ class User(BaseModel):
     last_name = Column(String, nullable=False)
     email = Column(String, nullable=False)
 
-    orders = relationship("Order", back_populates="user")
+    orders = relationship("Order", backref="user")
 
 
 class Book(BaseModel):
@@ -33,19 +33,17 @@ class Order(BaseModel):
     __tablename__ = "orders"
 
     reg_date = Column(DateTime, nullable=False)
-    user_id = Column(Integer, ForeignKey("users.id"))
-
-    user = relationship("User", back_populates="orders")
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
 
 
 class OrderItem(BaseModel):
     __tablename__ = "order_items"
 
     quantity = Column(Integer, nullable=False)
-    order_id = Column(Integer, ForeignKey("orders.id"))
-    book_id = Column(Integer, ForeignKey("books.id"))
-    shop_id = Column(Integer, ForeignKey("shops.id"))
+    order_id = Column(Integer, ForeignKey("orders.id"), nullable=False)
+    book_id = Column(Integer, ForeignKey("books.id"), nullable=False)
+    shop_id = Column(Integer, ForeignKey("shops.id"), nullable=False)
 
-    order = relationship("Order", back_populates="items")
-    book = relationship("Book", back_populates="order_items")
-    shop = relationship("Shop", back_populates="order_items")
+    order = relationship("Order")
+    book = relationship("Book")
+    shop = relationship("Shop")
