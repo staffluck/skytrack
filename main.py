@@ -14,7 +14,7 @@ from models.scheme import OrderOutputScheme, UserOutputScheme, OrderInputScheme
 app = FastAPI()
 
 
-class NotFound(HTTPException):  # В реальном проекте стоит отправлять локацию поля, где возникла ошибка, как делает это делает fastapi при помощи pydantic
+class NotFound(HTTPException):  # В реальном проекте стоит отправлять локацию поля, где возникла ошибка, как это делает fastapi при помощи pydantic
     def __init__(self, *args, **kwargs):
         return super().__init__(status_code=404, detail="Not Found", *args, **kwargs)
 
@@ -24,6 +24,7 @@ async def get_user_detail(user_id: int, session: AsyncSession = Depends(get_sess
     user = await get_user_by_id(session, user_id)
     if not user:
         raise NotFound()
+
     return user
 
 
@@ -31,8 +32,9 @@ async def get_user_detail(user_id: int, session: AsyncSession = Depends(get_sess
 async def get_user_order_history(user_id: int, session: AsyncSession = Depends(get_session)):
     orders = await get_user_orders(session, user_id)
     if not orders:
-        if await user_is_exists(session, user_id):
+        if await user_is_exists(session, user_id):  # Запрос может вернуть [] для несуществующего User. Обработка таких ситуаций
             raise NotFound()
+
     return orders
 
 
@@ -55,9 +57,9 @@ async def create_order(order: OrderInputScheme, session: AsyncSession = Depends(
 @app.get("/orders/{order_id}/", response_model=OrderOutputScheme)
 async def get_order_detail(order_id: int, session: AsyncSession = Depends(get_session)):
     order = await get_order_by_id(session, order_id)
-    print(order)
     if not order:
         raise NotFound()
+
     return order
 
 if __name__ == '__main__':
