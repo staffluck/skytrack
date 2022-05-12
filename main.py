@@ -19,7 +19,7 @@ class NotFound(HTTPException):  # В реальном проекте стоит 
         return super().__init__(status_code=404, detail="Not Found", *args, **kwargs)
 
 
-@app.get("/user/{user_id}/", response_model=UserOutputScheme)
+@app.get("/users/{user_id}/", response_model=UserOutputScheme)
 async def get_user_detail(user_id: int, session: AsyncSession = Depends(get_session)):
     user = await get_user_by_id(session, user_id)
     if not user:
@@ -27,7 +27,7 @@ async def get_user_detail(user_id: int, session: AsyncSession = Depends(get_sess
     return user
 
 
-@app.get("/user/{user_id}/orders/", response_model=List[OrderOutputScheme])
+@app.get("/users/{user_id}/orders/", response_model=List[OrderOutputScheme])
 async def get_user_order_history(user_id: int, session: AsyncSession = Depends(get_session)):
     orders = await get_user_orders(session, user_id)
     if not orders:
@@ -38,12 +38,12 @@ async def get_user_order_history(user_id: int, session: AsyncSession = Depends(g
 
 @app.post("/orders/", response_model=OrderOutputScheme)
 async def create_order(order: OrderInputScheme, session: AsyncSession = Depends(get_session)):
-    order_in_db = await add_order(
-        session,
-        order.user_id,
-        [item.dict() for item in order.items]
-    )
     try:
+        order_in_db = await add_order(
+            session,
+            order.user_id,
+            [item.dict() for item in order.items]
+        )
         await session.commit()
     except IntegrityError:
         raise NotFound()
@@ -55,6 +55,7 @@ async def create_order(order: OrderInputScheme, session: AsyncSession = Depends(
 @app.get("/orders/{order_id}/", response_model=OrderOutputScheme)
 async def get_order_detail(order_id: int, session: AsyncSession = Depends(get_session)):
     order = await get_order_by_id(session, order_id)
+    print(order)
     if not order:
         raise NotFound()
     return order
