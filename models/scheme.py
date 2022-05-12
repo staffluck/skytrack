@@ -13,6 +13,7 @@ class UserOutputScheme(BaseScheme):
     id: int
     first_name: str
     last_name: str
+    email: str
 
 
 class ShopOutputScheme(BaseScheme):
