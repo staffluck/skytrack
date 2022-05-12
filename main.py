@@ -14,7 +14,7 @@ from models.scheme import OrderOutputScheme, UserOutputScheme, OrderInputScheme
 app = FastAPI()
 
 
-class NotFound(HTTPException):
+class NotFound(HTTPException):  # В реальном проекте стоит отправлять локацию поля, где возникла ошибка, как делает это делает fastapi при помощи pydantic
     def __init__(self, *args, **kwargs):
         return super().__init__(status_code=404, detail="Not Found", *args, **kwargs)
 
@@ -50,6 +50,14 @@ async def create_order(order: OrderInputScheme, session: AsyncSession = Depends(
 
     order_joined = await get_order_by_id(session, order_in_db.id)
     return order_joined
+
+
+@app.get("/orders/{order_id}/", response_model=OrderOutputScheme)
+async def get_order_detail(order_id: int, session: AsyncSession = Depends(get_session)):
+    order = await get_order_by_id(session, order_id)
+    if not order:
+        raise NotFound()
+    return order
 
 if __name__ == '__main__':
     uvicorn.run("main:app", port=1111, host='127.0.0.1', reload=True)
