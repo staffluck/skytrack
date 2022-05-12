@@ -7,7 +7,7 @@ from fastapi.exceptions import HTTPException
 import uvicorn
 
 from deps.session import get_session
-from services.user import get_user_by_id
+from services.user import get_user_by_id, user_is_exists
 from services.order import add_order, get_order_by_id, get_user_orders
 from models.scheme import OrderOutputScheme, UserOutputScheme, OrderInputScheme
 
@@ -30,6 +30,9 @@ async def get_user_detail(user_id: int, session: AsyncSession = Depends(get_sess
 @app.get("/user/{user_id}/orders/", response_model=List[OrderOutputScheme])
 async def get_user_order_history(user_id: int, session: AsyncSession = Depends(get_session)):
     orders = await get_user_orders(session, user_id)
+    if not orders:
+        if await user_is_exists(session, user_id):
+            raise NotFound()
     return orders
 
 
