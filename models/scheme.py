@@ -15,25 +15,35 @@ class UserOutputScheme(BaseScheme):
     last_name: str
 
 
-class ShopScheme(BaseScheme):
+class ShopOutputScheme(BaseScheme):
     name: str
     address: str
 
 
-class BookScheme(BaseScheme):
+class BookOutputScheme(BaseScheme):
     name: str
     author: str
     release_date: date
 
 
-class OrderItemScheme(BaseScheme):
+class OrderItemOutputScheme(BaseScheme):
     quantity: int
-    book: BookScheme
-    shop: ShopScheme
-    pass
+    book: BookOutputScheme
+    shop: ShopOutputScheme
 
 
 class OrderOutputScheme(BaseScheme):
-    items: List[OrderItemScheme]
+    items: List[OrderItemOutputScheme]
     reg_date: datetime
     user_id: int
+
+
+class OrderItemInputScheme(BaseModel):
+    quantity: int
+    book_id: int
+    shop_id: int
+
+
+class OrderInputScheme(BaseModel):
+    user_id: int
+    items: List[OrderItemInputScheme]

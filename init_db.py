@@ -1,4 +1,3 @@
-from typing import List
 import asyncio
 from datetime import datetime
 
