@@ -48,6 +48,7 @@ async def create_order(order: OrderInputScheme, session: AsyncSession = Depends(
         )
         await session.commit()
     except IntegrityError:
+        await session.rollback()
         raise NotFound()
 
     order_joined = await get_order_by_id(session, order_in_db.id)
