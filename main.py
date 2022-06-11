@@ -47,12 +47,17 @@ async def create_order(order: OrderInputScheme, session: AsyncSession = Depends(
             [item.dict() for item in order.items]
         )
         await session.commit()
-    except IntegrityError:
+    except IntegrityError as e:
+        print(e)
         await session.rollback()
         raise NotFound()
 
-    order_joined = await get_order_by_id(session, order_in_db.id)
-    return order_joined
+    # order_joined = await get_order_by_id(session, order_in_db.id)
+    # await session.refresh(order_in_db)
+    print(order_in_db.items[0].book)
+    # print(dir(order_in_db.items), dir(order_joined.items))
+
+    return order_in_db
 
 
 @app.get("/orders/{order_id}/", response_model=OrderOutputScheme)
